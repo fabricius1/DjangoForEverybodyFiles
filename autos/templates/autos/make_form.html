@@ -1,0 +1,17 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+
+<form style="margin-top: 30px;" method="POST" action="">
+    {% csrf_token %}
+    <table>
+        {{form.as_table}}
+    </table>
+    <label style="margin-left: 50px;">Enter a make (e.g. Dodge)</label>
+    <br>
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel"
+     onclick="window.location='{% url 'autos:all' %}'; return false;">
+</form>
+
+{% endblock %}

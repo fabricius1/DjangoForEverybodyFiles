@@ -1,0 +1,16 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+
+  <form style="margin-top: 30px;" method="POST" action="">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <label style="margin-left: 50px;">Enter a breed (e.g. Siamese)</label>
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel"
+     onclick="window.location='{% url 'cats:all' %}'; return false;">
+  </form>
+
+{% endblock %}
