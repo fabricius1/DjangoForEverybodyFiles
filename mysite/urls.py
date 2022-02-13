@@ -4,7 +4,9 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.views.static import serve
-from django.views.generic import TemplateView
+# from django.views.generic import TemplateView
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('', include('home.urls')),  # Change to ads.urls
@@ -42,6 +44,8 @@ urlpatterns = [
     # path('well/', include('well.urls')),
     # path('tagme/', include('tagme.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Serve the static HTML
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

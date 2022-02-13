@@ -1,4 +1,5 @@
 {% extends "base_menu.html" %}
+{% load static %}
 {% load humanize %} <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize -->
 {% block content %}
 <span style="float: right;">
@@ -15,7 +16,37 @@
 </p>
 <p>
 </p>
+{% if ad.picture %}
+    <img src="{{ad.picture.url}}" alt="texto alternativo para a imagem">
+{% endif %}
 <p>
-<a href="{% url 'ads:all' %}">All ads</a>
 </p>
+
+<!-- new part -->
+
+{% if user.is_authenticated %}
+    <br clear="all"/>
+    <p>
+    {% load crispy_forms_tags %}
+
+    <form method="post" action="{% url 'ads:ad_comment_create' ad.id %}">
+        {% csrf_token %}
+        {{ comment_form | crispy }}
+        <input type="submit" value="Submit">
+        <input type="submit" value="All Ads" onclick="window.location.href='{% url 'ads:all' %}';return false;">
+    </form>
+    </p>
+{% endif %}
+
+{% for comment in comments %}
+    <p> {{ comment.text }} 
+    ({{ comment.updated_at|naturaltime }})
+    
+    {% if user == comment.owner %}
+        <a href="{% url 'ads:ad_comment_delete' comment.id %}"><i class="fa fa-trash"></i></a>
+    {% endif %}
+    </p>
+{% endfor %}
+
+<!-- end new part -->
 {% endblock %}
