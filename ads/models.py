@@ -17,8 +17,10 @@ class Ad(models.Model) :
                                 editable=True)
     comments = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                       through='Comment',
-                                      related_name='comments_owned')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+                                      related_name='ads_comments_owned')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE,
+                              related_name='ads_owner')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     # Favorites
@@ -26,7 +28,7 @@ class Ad(models.Model) :
         through='Fav', related_name='favorite_ads')
     
     # Tags
-    tags = TaggableManager(blank=True)
+    tags = TaggableManager(blank=True) 
 
     # Shows up in the admin list
     def __str__(self):
@@ -39,7 +41,9 @@ class Comment(models.Model) :
     )
 
     ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE,
+                              related_name='comment_owner')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

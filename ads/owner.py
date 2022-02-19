@@ -27,6 +27,7 @@ class OwnerCreateView(LoginRequiredMixin, CreateView):
         object = form.save(commit=False)
         object.owner = self.request.user
         object.save()
+        form.save_m2m()
         return super(OwnerCreateView, self).form_valid(form)
 
 
