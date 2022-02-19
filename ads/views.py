@@ -2,11 +2,13 @@ from .models import Ad, Fav
 from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .owner import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdateView, OwnerDeleteView
 from .forms import CommentForm
 from .models import Comment
 from django.views import View
+from django.db.models import Q
 
 # to favorite Views
 from django.views.decorators.csrf import csrf_exempt
@@ -18,16 +20,44 @@ class AdListView(OwnerListView):
     model = Ad
     template_name = "ads/ad_list.html"
 
-    def get(self, request) :
-        ad_list = Ad.objects.all()
+    def get(self, request):
+        
+        # filter funcionality
+        strval =  request.GET.get("search", False)
+        if strval :
+            query = Q(title__icontains=strval) 
+            query.add(Q(text__icontains=strval), Q.OR)
+            ad_list = Ad.objects.filter(query).select_related().order_by('-updated_at')[:10]
+        else :
+            ad_list = Ad.objects.all().order_by('-updated_at')[:10]
+
+        # Augment the ad_list
+        for obj in ad_list:
+            obj.natural_updated = naturaltime(obj.updated_at)
+
+        
+        
+        # favorites funcionality
+        
+        # ad_list = Ad.objects.all()
         favorites = list()
         if request.user.is_authenticated:
             # rows = [{'id': 2}, {'id': 4} ... ]  (A list of rows)
             rows = request.user.favorite_ads.values('id')
             # favorites = [2, 4, ...] using list comprehension
             favorites = [ row['id'] for row in rows ]
-        ctx = {'ad_list' : ad_list, 'favorites': favorites}
+        # ctx = {'ad_list' : ad_list, 'favorites': favorites}
+        
+        ctx = {'ad_list' : ad_list,
+               'search': strval,
+               'favorites': favorites}
         return render(request, self.template_name, ctx)
+
+
+        
+        # return render(request, self.template_name, ctx)
+
+
 
 
 class AdDetailView(OwnerDetailView):

@@ -2,6 +2,21 @@
 {% block content %}
 <h1>Ads</h1>
 <p>
+
+<!-- search funcionality -->
+<div style="float:right">
+    <!-- https://www.w3schools.com/howto/howto_css_search_button.asp -->
+    <form>
+      <input type="text" placeholder="Search.." name="search"
+      {% if search %} value="{{search}}" {% endif %}
+      >
+      <button type="submit"><i class="fa fa-search"></i></button>
+    <a href="{% url 'ads:all' %}"><i class="fa fa-undo"></i></a>
+    </form>
+    </div>
+    <p>
+<!-- end search funcionality -->
+
 {% if ad_list %}
 <ul>
   {% for ad in ad_list %}

@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import configparser
 import os
 
-config_parser = configparser.ConfigParser() 
+config_parser = configparser.ConfigParser()
 config_parser.read('conf_file.ini')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -130,37 +130,43 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+CHOSEN_DB = config_parser['DEFAULT']['CHOSEN_DB'].lower().strip()
+CHOSEN_ENV = config_parser['DEFAULT']['CHOSEN_ENV'].lower().strip()
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME':  config_parser['PYTHONANYWHERE']['MYSQL_USER'] + '$mysite',
-#         'USER': config_parser['PYTHONANYWHERE']['MYSQL_USER'],
-#         'PASSWORD': config_parser['PYTHONANYWHERE']['MYSQL_PASSWORD'],
-#         'HOST': 'fabriciobarbacena.mysql.pythonanywhere-services.com',
-#          'OPTIONS': {
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#         },
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mysite',
-        'USER': config_parser['LOCAL']['MYSQL_USER'],
-        'PASSWORD': config_parser['LOCAL']['MYSQL_PASSWORD'],
-        'HOST': 'localhost',
-        'PORT': '3306',
+if CHOSEN_DB == 'sqlite3':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
 
+else:
+    if CHOSEN_ENV == 'local':
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': 'mysite',
+                'USER': config_parser['LOCAL']['MYSQL_USER'],
+                'PASSWORD': config_parser['LOCAL']['MYSQL_PASSWORD'],
+                'HOST': 'localhost',
+                'PORT': '3306',
+            }
+        }
+    
+    else:        
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME':  config_parser['PYTHONANYWHERE']['MYSQL_USER'] + '$mysite',
+                'USER': config_parser['PYTHONANYWHERE']['MYSQL_USER'],
+                'PASSWORD': config_parser['PYTHONANYWHERE']['MYSQL_PASSWORD'],
+                'HOST': 'fabriciobarbacena.mysql.pythonanywhere-services.com',
+                'OPTIONS': {
+                    'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                },
+            }
+        }
 
 
 # Password validation
